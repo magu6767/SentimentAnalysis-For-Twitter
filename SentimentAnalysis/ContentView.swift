@@ -6,16 +6,40 @@
 //
 
 import SwiftUI
+import Alamofire
 
 struct ContentView: View {
+    @State private var isActive = false
+    @State private var url = ""
+    @State var showingSheet = false
+    
+    @Environment(\.managedObjectContext) var moc
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, world!")
+        TabView{
+            HomeView()
+                .tabItem{
+                    Image(systemName: "house")
+                }
+            HistoryView()
+                .tabItem{
+                    Image(systemName: "clock")
+                }
         }
-        .padding()
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button {
+                    showingSheet = true
+                } label: {
+                    Image(systemName: "questionmark.circle")
+                        .resizable()
+                        .frame(width: 30, height: 30)
+                }
+                .foregroundColor(Color("imageColor"))
+                .sheet(isPresented: $showingSheet, content: {    DescriptionView()})
+            }
+        }
+        .accentColor(Color("imageColor"))
     }
 }
 
