@@ -8,6 +8,7 @@
 import SwiftUI
 import Charts
 
+//履歴の各データ
 struct ResultHistoryView: View {
     @ObservedObject var data: AnalysisData
     

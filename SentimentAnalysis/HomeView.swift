@@ -9,20 +9,19 @@ import SwiftUI
 import Alamofire
 import CoreData
 
-
+//ホーム画面
 struct HomeView: View {
-    @Environment(\.managedObjectContext) var moc
-    @State var tweetText = ApiFetcher()
-    @State private var isActive = false
     @State private var url = ""
     @State private var isLoding = false
     @State private var showingAlert = false
     @State private var showingResultView = false
+    //ApiFetcherクラスのインスタンスを作成
+    @State var tweetText = ApiFetcher()
+    //テキストフィールド用のフォーカスフラグ
     @FocusState var focus:Bool
+    //CoreData用の環境変数
+    @Environment(\.managedObjectContext) var moc
 
-    // 画面遷移フラグ
-    @State var animationFlag = false
-    
     var body: some View {
         VStack {
             if isLoding == false {
@@ -32,6 +31,7 @@ struct HomeView: View {
                         .frame(width: 200, height: 200)
                         .padding(.bottom, 20)
                         .shadow(radius: 3)
+                    //テキストフィールドの中にプレースホルダーを表示
                     ZStack(alignment: .topLeading) {
                         TextEditor(text: $url)
                             .padding(.horizontal, -4)
@@ -42,6 +42,7 @@ struct HomeView: View {
                         
                         
                         if url.isEmpty {
+                            //プレースホルダとして表示
                             Text("URLを入力") .foregroundColor(Color(uiColor: .placeholderText))
                                 .allowsHitTesting(false)
                                 .padding(5)
@@ -59,9 +60,11 @@ struct HomeView: View {
                             var tweet_id = String(formatURL(url: url)[2])
                             tweet_id = formatID(id: tweet_id)
                             tweetText.tweet_id = tweet_id
+                            //ローディング画面へ
                             isLoding = true
                             Task.detached{
                                 do {
+                                    //データ取得開始
                                     try await tweetTextFunc(tweetText: tweetText)
                                 } catch {
                                     print(error.localizedDescription)
@@ -70,12 +73,12 @@ struct HomeView: View {
                             }
                         }
                     }
-                    
                     .buttonStyle(AnimationButtonStyle())
                     .padding(.top, 5)
                     Spacer()
                 }
                 .onTapGesture {
+                    //タップされたらキーボードを閉じる
                             self.focus = false
                         }
                 .alert("""
@@ -87,6 +90,7 @@ struct HomeView: View {
                 
                 
             } else {
+                //ローディング画面
                 VStack{
                     ProgressView()
                     Text("大量のリプライや引用があるツイートの場合、分析に時間がかかることがあります。")
@@ -124,6 +128,7 @@ struct HomeView: View {
         }
         return id
     }
+    //API通信
     func tweetTextFunc(tweetText: ApiFetcher) async throws {
         //引数は定数となっているので変数に変換
         tweetText.paramInit()
@@ -134,6 +139,7 @@ struct HomeView: View {
         showingResultView = true //ここで画面遷移
     }
 }
+//ボタンのスタイル
 struct AnimationButtonStyle : ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label

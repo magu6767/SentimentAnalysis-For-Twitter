@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+//履歴画面
 struct HistoryView: View {
     @FetchRequest(sortDescriptors: [NSSortDescriptor(key: "createdAt", ascending: false)]) var AnalysisData: FetchedResults<AnalysisData>
     @Environment(\.managedObjectContext) var moc

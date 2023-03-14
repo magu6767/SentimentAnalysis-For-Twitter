@@ -10,8 +10,14 @@ import NaturalLanguage
 import CoreML
 import Charts
 
-
-
+//グラフの型
+struct ChartEntry: Identifiable {
+    var title: String
+    var value: Double
+    var color: Color
+    var id = UUID()
+}
+//リザルト画面
 struct ResultView: View {
     @Environment(\.managedObjectContext) var moc
     @Binding var tweets: [String]
@@ -26,6 +32,7 @@ struct ResultView: View {
     
     
     var body: some View {
+        //グラフの属性設定
         let data: [ChartEntry] = [
             .init(title: "ポジティブ", value: Double(positiveCount), color: .green),
             .init(title: "ネガティブ", value: Double(negativeCount), color: .red),
@@ -66,15 +73,15 @@ struct ResultView: View {
             
         }
         .onAppear{
+            //渡されたツイートを分析
             textClassifier(texts: tweets)
+            //保存
             saveData()
-            print("ポジティブ" + String(positiveCount) + " ネガティブ" + String(negativeCount) + " 中立" +  String(neutralCount))
-            
         }
         
     }
     
-    
+    //テキストの分析
     func textClassifier(texts: [String])  {
         do {
             print(texts.count)
@@ -96,6 +103,7 @@ struct ResultView: View {
         }
         
     }
+    //データ保存
     func saveData()  {
         let data = SentimentAnalysis.AnalysisData(context: moc)
         data.id = UUID()

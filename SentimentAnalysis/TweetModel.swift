@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+//JSON<->クラス変換用のモデル
 struct tweetModel: Codable {
     var id: Int64
     var text: String
@@ -25,21 +26,4 @@ struct userModel: Codable {
 struct User: Codable {
     var name: String
     var screen_name: String
-}
-
-struct ResultModel: Codable {
-    var positiveCount: Int
-    var negativeCount: Int
-    var username: String
-    var screen_name: String
-    var originalText: String
-}
-
-struct ChartEntry: Identifiable {
-    var title: String
-    var value: Double
-    var color: Color
-    var id: String {
-        return title + String(value)
-    }
 }

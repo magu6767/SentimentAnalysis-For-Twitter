@@ -6,9 +6,8 @@
 //
 
 import SwiftUI
-import Charts
 
-
+//説明画面
 struct DescriptionView: View {
     var body: some View {
         ScrollView(showsIndicators: true){

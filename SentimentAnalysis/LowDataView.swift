@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+//得られたツイートがが少なかった場合の案内
 struct LowDataView: View {
     var body: some View {
         VStack {
