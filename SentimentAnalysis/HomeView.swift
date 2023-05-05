@@ -13,13 +13,11 @@ import CoreData
 struct HomeView: View {
     @State private var url = ""
     @State private var isLoding = false
-    @State private var showingAlert = false
-    @State private var showingResultView = false
+    @State private var isShowAlert = false
+    @State private var isShowResultView = false
     //ApiFetcherクラスのインスタンスを作成
     @State var tweetText = ApiFetcher()
-    //テキストフィールド用のフォーカスフラグ
     @FocusState var focus:Bool
-    //CoreData用の環境変数
     @Environment(\.managedObjectContext) var moc
 
     var body: some View {
@@ -31,18 +29,15 @@ struct HomeView: View {
                         .frame(width: 200, height: 200)
                         .padding(.bottom, 20)
                         .shadow(radius: 3)
-                    //テキストフィールドの中にプレースホルダーを表示
                     ZStack(alignment: .topLeading) {
                         TextEditor(text: $url)
+                            .focused(self.$focus)
                             .padding(.horizontal, -4)
                             .frame(width: 300, height: 200)
                             .padding(.leading ,5)
                             .overlay(RoundedRectangle(cornerRadius: 5).stroke(.gray, lineWidth: 1))
-                            .focused(self.$focus)
-                        
                         
                         if url.isEmpty {
-                            //プレースホルダとして表示
                             Text("URLを入力") .foregroundColor(Color(uiColor: .placeholderText))
                                 .allowsHitTesting(false)
                                 .padding(5)
@@ -53,19 +48,19 @@ struct HomeView: View {
                             let url = url
                             //URLが有効か検査
                             guard formatURL(url: url).count == 3 else{
-                                showingAlert = true
+                                isShowAlert = true
                                 return
                             }
                             
                             var tweet_id = String(formatURL(url: url)[2])
                             tweet_id = formatID(id: tweet_id)
-                            tweetText.tweet_id = tweet_id
+                            tweetText.tweetId = tweet_id
                             //ローディング画面へ
                             isLoding = true
                             Task.detached{
                                 do {
                                     //データ取得開始
-                                    try await tweetTextFunc(tweetText: tweetText)
+                                    try await fetchTweetText(tweetText: tweetText)
                                 } catch {
                                     print(error.localizedDescription)
                                     return
@@ -78,13 +73,12 @@ struct HomeView: View {
                     Spacer()
                 }
                 .onTapGesture {
-                    //タップされたらキーボードを閉じる
                             self.focus = false
                         }
                 .alert("""
                         URLが正しく入力されて
                         いません
-                        """, isPresented: $showingAlert, actions: {},message: {
+                        """, isPresented: $isShowAlert, actions: {},message: {
                     Text("")
                 })
                 
@@ -100,19 +94,19 @@ struct HomeView: View {
                 }
             }
         }
-        .navigationDestination(isPresented: $showingResultView){
+        .navigationDestination(isPresented: $isShowResultView){
             ResultView(
                 tweets: $tweetText.tweets,
                 originalText: $tweetText.originalText,
-                username: $tweetText.username,
-                screen_name: $tweetText.screen_name)
+                username: $tweetText.userName,
+                screen_name: $tweetText.screenName)
             .environment(\.managedObjectContext, self.moc)
         }
     }
     //URLを分割
     func formatURL(url: String) -> [String.SubSequence] {
         guard let url = URL(string: url) else{
-            showingAlert = true
+            isShowAlert = true
             return [""]
         }
         let urlData = url.path.split(separator: "/")
@@ -129,14 +123,14 @@ struct HomeView: View {
         return id
     }
     //API通信
-    func tweetTextFunc(tweetText: ApiFetcher) async throws {
+    func fetchTweetText(tweetText: ApiFetcher) async throws {
         //引数は定数となっているので変数に変換
         tweetText.paramInit()
-        tweetText.user_id = String(formatURL(url: url)[0])
-        tweetText.search_userInfo()
-        tweetText.search_tweet()
+        tweetText.userId = String(formatURL(url: url)[0])
+        tweetText.searchUserInfo()
+        tweetText.searchTweet()
         isLoding = false
-        showingResultView = true //ここで画面遷移
+        isShowResultView = true //ここで画面遷移
     }
 }
 //ボタンのスタイル

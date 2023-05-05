@@ -74,15 +74,15 @@ struct ResultView: View {
         }
         .onAppear{
             //渡されたツイートを分析
-            textClassifier(texts: tweets)
+            textClassify(texts: tweets)
             //保存
-            saveData()
+            saveAnalysisResult()
         }
         
     }
     
     //テキストの分析
-    func textClassifier(texts: [String])  {
+    func textClassify(texts: [String])  {
         do {
             print(texts.count)
             let mlModel = try SentimentClassifier(configuration: MLModelConfiguration()).model
@@ -104,7 +104,7 @@ struct ResultView: View {
         
     }
     //データ保存
-    func saveData()  {
+    func saveAnalysisResult() {
         let data = SentimentAnalysis.AnalysisData(context: moc)
         data.id = UUID()
         data.name = username
