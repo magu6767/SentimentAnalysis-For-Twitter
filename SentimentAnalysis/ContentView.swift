@@ -10,7 +10,7 @@ import SwiftUI
 struct ContentView: View {
     @State private var isActive = false
     @State private var url = ""
-    @State var showingSheet = false
+    @State var isShowingSheet = false
     
     @Environment(\.managedObjectContext) var moc
     
@@ -20,7 +20,7 @@ struct ContentView: View {
                 .tabItem{
                     Image(systemName: "house")
                 }
-            HistoryView()
+            HistoryTableView()
                 .tabItem{
                     Image(systemName: "clock")
                 }
@@ -28,14 +28,14 @@ struct ContentView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
                 Button {
-                    showingSheet = true
+                    isShowingSheet = true
                 } label: {
                     Image(systemName: "questionmark.circle")
                         .resizable()
                         .frame(width: 30, height: 30)
                 }
                 .foregroundColor(Color("imageColor"))
-                .sheet(isPresented: $showingSheet, content: {    DescriptionView()})
+                .sheet(isPresented: $isShowingSheet, content: { DescriptionView() })
             }
         }
         .accentColor(Color("imageColor"))

@@ -8,7 +8,7 @@
 import SwiftUI
 
 //履歴画面
-struct HistoryView: View {
+struct HistoryTableView: View {
     @FetchRequest(sortDescriptors: [NSSortDescriptor(key: "createdAt", ascending: false)]) var AnalysisData: FetchedResults<AnalysisData>
     @Environment(\.managedObjectContext) var moc
     @State var count = 0
@@ -44,6 +44,6 @@ struct HistoryView: View {
 }
 struct HistoryView_Previews: PreviewProvider {
     static var previews: some View {
-        HistoryView()
+        HistoryTableView()
     }
 }
