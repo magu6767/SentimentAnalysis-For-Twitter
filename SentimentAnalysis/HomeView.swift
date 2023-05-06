@@ -15,6 +15,7 @@ struct HomeView: View {
     @State private var isLoding = false
     @State private var isShowAlert = false
     @State private var isShowResultView = false
+    
     //ApiFetcherクラスのインスタンスを作成
     @State var tweetText = ApiFetcher()
     @FocusState var focus:Bool
