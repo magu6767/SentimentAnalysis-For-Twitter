@@ -105,7 +105,7 @@ class ApiFetcher{
         loopFlag = true
         //引用の取得
         while loopFlag == true {
-            let url = "https://api.twitter.com/1.1/search/tweets.json?q="+tweetId+"&count="+String(obtainedTweetsNumber)+"&max_id="+String(maxTweetId)
+            let url = "https://api.twitter.com/1.1/search/tweets.json?q="+tweetId+" is:quote"+"&count="+String(obtainedTweetsNumber)+"&max_id="+String(maxTweetId)
             guard let request_url = URL(
                 string: url
                     ) else {
@@ -127,14 +127,11 @@ class ApiFetcher{
                             self.loopFlag = false
                         }
                         for tweet in jsonData.statuses {
-                            //引用ステータスがtrueなら配列に加える
-                            if tweet.is_quote_status == true {
                                 DispatchQueue.main.async {
                                     self.tweets.append(self.formatTweetText(text: tweet.text, user_id: user_idCopy))
                                     self.quoteCount += 1
                                 }
                             }
-                        }
                         self.maxTweetId = (jsonData.statuses.last?.id ?? 0) - 1
                     } catch {
                         print(error.localizedDescription)
